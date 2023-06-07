@@ -17,12 +17,11 @@ const createAnswer = async (req, res) => {
 };
 
 const allAnswerForQuestion = async (req, res) => {
-  console.log("object");
   const { questionid } = req.params;
   try {
     const answers = await db.Answers.findAll({
       where: { questionId: questionid },
-      limit: 2,
+      // limit: 2,
       include: [
         {
           model: db.User,

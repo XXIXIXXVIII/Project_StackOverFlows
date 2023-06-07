@@ -6,7 +6,7 @@ import '../index.css'
 
 
 
-export default function QuestionCard({id,like, title,totalAnswers, content,view,tick, createdAt, avatar, username, userId, tags}) {
+export default function QuestionCard({id,like, title,totalAnswers, content,view,tick, createdAt, avatar, username, userId, tags, fetch}) {
   console.log(like);
   const timeAgo = moment(createdAt).fromNow();
   return (
@@ -23,7 +23,7 @@ export default function QuestionCard({id,like, title,totalAnswers, content,view,
       <div className="contentQuestion my-1 break-word" dangerouslySetInnerHTML={{ __html: content }}></div>
       <div className="flex justify-between items-center">
         <div className="mt-1 flex gap-1">
-          {tags.map(tag=><Link to={`/questions/tagged/${tag.nameTag}`} key={tag.id} className="bg-[hsl(205,46%,92%)] text-[hsl(205,47%,42%)] rounded px-[6px] py-[4.8px] text-xs hover:text-[hsl(205,46%,32%)] hover:bg-[hsl(205,53%,88%)] dark:bg-[hsl(205,14%,28%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:bg-[hsl(205,17.5%,32%)] dark:hover:text-[hsl(205,49.5%,87%)]">
+          {tags.map(tag=><Link onClick={()=>fetch()} to={`/questions/tagged/${tag.nameTag}`} key={tag.id} className="bg-[hsl(205,46%,92%)] text-[hsl(205,47%,42%)] rounded px-[6px] py-[4.8px] text-xs hover:text-[hsl(205,46%,32%)] hover:bg-[hsl(205,53%,88%)] dark:bg-[hsl(205,14%,28%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:bg-[hsl(205,17.5%,32%)] dark:hover:text-[hsl(205,49.5%,87%)]">
             {tag.nameTag}
           </Link>)
             }

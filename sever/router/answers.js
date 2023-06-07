@@ -4,7 +4,7 @@ const middleWareJwtController = require('../middleWare/jwt');
 
 const route = express.Router();
 
-route.post('/', answerController.createAnswer);
+route.post('/',middleWareJwtController.verifyToken, answerController.createAnswer);
 route.get('/:questionid', answerController.allAnswerForQuestion);
 
 

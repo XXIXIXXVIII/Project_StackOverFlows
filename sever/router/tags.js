@@ -6,5 +6,6 @@ const route = express.Router();
 
 route.get('/', tagsController.getTagsCard);
 route.post('/', tagsController.createTagQuestion);
+route.get('/tagged/:tagName', tagsController.getTagdetail);
 
 module.exports = route;

@@ -39,30 +39,75 @@ const getTagsCard = async (req, res) => {
   }
 };
 
-
-const createTagQuestion = async(req,res)=>{
+const createTagQuestion = async (req, res) => {
   console.log("object");
-  const {tags, questionId} = req.body;
+  const { tags, questionId } = req.body;
   try {
-    const result = await Promise.all(tags.map( async(tag)=>{
-      const check = await db.Tags.findOne({where:{nameTag:tag}})
-      if(check){
-        await db.QuestionsTags.create({tagId: check.id, questionId:questionId})
-        return
-      }else{
-        try {
-          const newTag = await db.Tags.create({nameTag:tag})
-        const newTagQuestion = await db.QuestionsTags.create({tagId:newTag.id, questionId:questionId})
-        return res.status(200).json("success created new tag")
-        } catch (error) {
-          return res.status(404).json({message:error.message})
+    const result = await Promise.all(
+      tags.map(async (tag) => {
+        const check = await db.Tags.findOne({ where: { nameTag: tag } });
+        if (check) {
+          await db.QuestionsTags.create({
+            tagId: check.id,
+            questionId: questionId,
+          });
+          return;
+        } else {
+          try {
+            const newTag = await db.Tags.create({ nameTag: tag });
+            const newTagQuestion = await db.QuestionsTags.create({
+              tagId: newTag.id,
+              questionId: questionId,
+            });
+            return res.status(200).json("success created new tag");
+          } catch (error) {
+            return res.status(404).json({ message: error.message });
+          }
         }
-      }
-    }))
-
+      })
+    );
   } catch (error) {
-    return res.status(404).json(error)
+    return res.status(404).json(error);
   }
-}
+};
 
-module.exports = { getTagsCard,createTagQuestion };
+const getTagdetail = async (req, res) => {
+  console.log("object");
+  console.log(req.params);
+  try {
+    const { tagName } = req.params;
+    const tag = await db.Tags.findOne({
+      where: { nameTag: tagName },
+      include: [
+        {
+          model: db.Questions,
+          attributes: [
+            "id",
+            "title",
+            "content",
+            "view",
+            "like",
+            "createdAt",
+            [
+              db.Sequelize.literal(
+                "(SELECT COUNT(*) FROM `answers` WHERE `answers`.`questionId` = `Questions`.`id`)"
+              ),
+              "totalAnswers",
+            ],
+          ],
+          include: [
+            { model: db.User, attributes: ["id", "username", "avatar"] },
+            { model: db.Tags, attributes: ["id", "nameTag"] },
+          ],
+        },
+      ],
+    });
+    const totalQuestions = await db.QuestionsTags.count({where:{tagId:tag.id}})
+    return res.status(200).json({tag, totalQuestions});
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error);
+  }
+};
+
+module.exports = { getTagsCard, createTagQuestion, getTagdetail };
