@@ -1,0 +1,75 @@
+.findSearch::after{
+  background-color: hsl(27,95%,90%);
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  content: '';
+  top: 98%;
+  right: 0;
+  display: block;
+  clip-path: polygon(18px 0, 32px 0, 0 40px, 0 38px, 0 0, 18px 0);
+  transform: scaleX(-1);
+  border-radius: 0 5px 0;
+}
+
+.locksecure::after{
+  background-color: hsl(206,96%,90%);
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  content: '';
+  top: 98%;
+  left: 0;
+  display: block;
+  clip-path: polygon(18px 0, 32px 0, 0 40px, 0 38px, 0 0, 18px 0);
+  border-radius: 0 5px 0;
+}
+
+.backgroundTop {
+  clip-path: url(#myCurve)
+}
+.showdownHomel .showdownHome2{
+  box-shadow: 0 12px 11px rgba(0,0,0,0.035), 0 100px 80px rgba(0,0,0,0.07)
+}
+.custom-shape-divider-top-1685097279 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.custom-shape-divider-top-1685097279 svg {
+  position: relative;
+  display: block;
+  width: calc(275% + 1.3px);
+  height: 170px;
+}
+
+.custom-shape-divider-top-1685097279 .shape-fill {
+  fill: rgb(241 245 249);
+}
+
+.quill{
+  min-height: 200px !important;
+}
+.ql-toolbar .ql-snow{
+  border-radius: 100px !important;
+  background-color: red;
+}
+.ql-editor{
+  min-height: 200px !important;
+  max-height: 94vh !important;
+
+
+}
+.ql-toolbar{
+  border-top-left-radius: 5px !important;
+  border-top-right-radius: 5px !important;
+  border-bottom: none !important;
+}
+.ql-container{
+  border-bottom-left-radius: 5px !important;
+  border-bottom-right-radius: 5px !important;
+}
