@@ -7,7 +7,7 @@ import '../index.css'
 
 
 export default function QuestionCard({id,like, title,totalAnswers, content,view,tick, createdAt, avatar, username, userId, tags, fetch}) {
-  console.log(like);
+  console.log(tags);
   const timeAgo = moment(createdAt).fromNow();
   return (
     <div className="mx-auto py-4 flex gap-5 text-[13px] border-t border-[hsl(210,8%,90%)]">
@@ -59,6 +59,7 @@ QuestionCard.propTypes = {
   avatar: PropTypes.string,
   username: PropTypes.string,
   userId: PropTypes.number,
-  tags: PropTypes.arrayOf(PropTypes.string),
+  fetch: PropTypes.func,
+  tags: PropTypes.arrayOf(PropTypes.object),
 
 };

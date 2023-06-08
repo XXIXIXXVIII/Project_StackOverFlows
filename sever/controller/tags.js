@@ -72,8 +72,6 @@ const createTagQuestion = async (req, res) => {
 };
 
 const getTagdetail = async (req, res) => {
-  console.log("object");
-  console.log(req.params);
   try {
     const { tagName } = req.params;
     const tag = await db.Tags.findOne({
@@ -110,4 +108,38 @@ const getTagdetail = async (req, res) => {
   }
 };
 
-module.exports = { getTagsCard, createTagQuestion, getTagdetail };
+
+const createUserFollowTag = async (req,res)=>{
+  console.log("object");
+  try {
+    const { userId, tagId } = req.body
+    const check = await db.UserFollowTag.findOne({where:{userId:userId, tagId: tagId}})
+    if(check){
+        const result = await db.UserFollowTag.destroy({where:{userId:userId, tagId: tagId}})
+        return res.status(200).json("unfollow success")
+      }else{
+        const result = await db.UserFollowTag.create({userId:userId, tagId: tagId})
+        return res.status(200).json("follow success")
+      }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error)
+  }
+}
+
+const getUserFollowTag = async(req,res)=>{
+  try {
+    const { userId, tagId } = req.body
+    const check = await db.UserFollowTag.findOne({where:{userId:userId, tagId: tagId}})
+    if(check){
+      return res.status(200).json(true)
+    }else{
+      return res.status(200).json(false) 
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json("something wrong")
+  }
+}
+
+module.exports = { getTagsCard, createTagQuestion, getTagdetail, createUserFollowTag,getUserFollowTag };

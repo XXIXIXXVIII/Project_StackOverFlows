@@ -6,6 +6,8 @@ import delGray from "../assets/tagdetail/delGray.png";
 import { useEffect, useState } from "react";
 import publicClient from "./../configAPIClient/publicClient";
 import QuestionCard from "../component/Questions/QuestionCard";
+import { useSelector } from 'react-redux';
+import privateClient from './../configAPIClient/privateClient';
 
 export default function TagDetail() {
   const { tagName } = useParams();
@@ -13,40 +15,69 @@ export default function TagDetail() {
   const [data, setData] = useState([]);
   const [dataTagDetail, setDataTagDetail] = useState()
   const [totalQuestions, setTotalQuestions] = useState();
-  const [showEye, setShowEye] = useState(false);
+  const [showEye, setShowEye] = useState();
   const [showIgnore, setShowIgnore] = useState(false);
+  const [tagId, setTagId] = useState();
+
 
   const fetch = async () => {
     const result = await publicClient.get(`/tags/tagged/${tagName}`);
     setData(result.data.tag.Questions);
     setTotalQuestions(result.data.totalQuestions);
     setDataTagDetail(result.data.tag)
+    setTagId(result.data.tag.id)
   };
+  const userId = useSelector(state=>state.auth.login.currentUser?.id)
 
-  console.log(totalQuestions);
   useEffect(() => {
     fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(()=>{
+    if(tagId){
+      fetchGetUserFollowTag()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[tagId])
+
   const handleEye = () => {
     if (showIgnore === false) {
-      console.log("object");
       setShowEye(!showEye);
+      fetchCreateUserFollowTag()
     }
     if (showIgnore === true) {
       setShowIgnore(false);
       setShowEye(true);
+      fetchCreateUserFollowTag()
     }
   };
 
+console.log(showEye);
+  const fetchCreateUserFollowTag = async()=>{
+    const result = await privateClient.post("/tags/userfollow", {userId, tagId})
+  }
+
+  const fetchGetUserFollowTag = async()=>{
+    try {
+      const result = await privateClient.post("/tags/getuserfollow", {userId, tagId})
+      setShowEye(result.data);
+    } catch (error) {
+      console.log(error);
+      return 
+    }
+  }
+
+
+
   const handleIgnore = () => {
     if (showEye === false) {
-      console.log("object");
       setShowIgnore(!showIgnore);
     }
     if (showEye === true) {
       setShowIgnore(true);
       setShowEye(false);
+      fetchCreateUserFollowTag()
     }
   };
 

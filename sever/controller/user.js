@@ -23,8 +23,8 @@ const getAllUsers = async (req, res) => {
     let allUser = await db.User.findAll({
       attributes: ["id","username", "avatar"],
       include: [
-        { model: db.ProfileUser, attributes: ["id","andress", "point"] },
-        { model: db.Tags, attributes: ["nameTag"],through: { attributes: [] },}
+        { model: db.ProfileUser },
+        { model: db.Tags, attributes: ["id","nameTag"],through: { attributes: [] },}
       ],
       // raw: true,
       nest: true,

@@ -29,7 +29,7 @@ export default function AllUserPage() {
     fetchAllUsers()
   },[])
 
-  console.log(loadDataAllUser);
+  console.log(dataAllUser);
 
   const handleClickReputation = () => {
     setArrange("Reputation");
