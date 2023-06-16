@@ -1,11 +1,13 @@
 const express = require("express");
 const Route = require("./router");
 const app = express();
+
 require("dotenv").config();
 const  cookieParser = require('cookie-parser')
 bodyParser = require("body-parser");
 var cors = require('cors')
 
+app.use('/', express.static('uploads'))
 app.use(cors())
 app.use(cookieParser())
 app.use(bodyParser.json());

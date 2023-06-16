@@ -1,10 +1,15 @@
+const { Op } = require("sequelize");
 const db = require("../models");
 
 const getTagsCard = async (req, res) => {
+  let q = req.query.q
+  if(!q){q=''}
+
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const dataTagsCard = await db.Tags.findAll({
+      where:{nameTag:{[Op.like]:`%${q}%`}},
       include: [
         { model: db.Questions, through: { attributes: [] }, attributes: [] },
       ],
@@ -40,7 +45,6 @@ const getTagsCard = async (req, res) => {
 };
 
 const createTagQuestion = async (req, res) => {
-  console.log("object");
   const { tags, questionId } = req.body;
   try {
     const result = await Promise.all(
@@ -67,7 +71,7 @@ const createTagQuestion = async (req, res) => {
       })
     );
   } catch (error) {
-    return res.status(404).json(error);
+    console.log(error);
   }
 };
 
@@ -100,46 +104,94 @@ const getTagdetail = async (req, res) => {
         },
       ],
     });
-    const totalQuestions = await db.QuestionsTags.count({where:{tagId:tag.id}})
-    return res.status(200).json({tag, totalQuestions});
+    console.log(req.params);
+    const totalQuestions = await db.QuestionsTags.count({
+      where: { tagId: tag.id },
+    });
+    return res.status(200).json({ tag, totalQuestions });
   } catch (error) {
     console.log(error);
     return res.status(400).json(error);
   }
 };
 
-
-const createUserFollowTag = async (req,res)=>{
-  console.log("object");
+const createUserFollowTag = async (req, res) => {
+  console.log(req.body);
   try {
-    const { userId, tagId } = req.body
-    const check = await db.UserFollowTag.findOne({where:{userId:userId, tagId: tagId}})
-    if(check){
-        const result = await db.UserFollowTag.destroy({where:{userId:userId, tagId: tagId}})
-        return res.status(200).json("unfollow success")
-      }else{
-        const result = await db.UserFollowTag.create({userId:userId, tagId: tagId})
-        return res.status(200).json("follow success")
-      }
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json(error)
-  }
-}
-
-const getUserFollowTag = async(req,res)=>{
-  try {
-    const { userId, tagId } = req.body
-    const check = await db.UserFollowTag.findOne({where:{userId:userId, tagId: tagId}})
-    if(check){
-      return res.status(200).json(true)
-    }else{
-      return res.status(200).json(false) 
+    const { userId, tagId } = req.body;
+    const check = await db.UserFollowTag.findOne({
+      where: { userId: userId, tagId: tagId },
+    });
+    if (check) {
+      const result = await db.UserFollowTag.destroy({
+        where: { userId: userId, tagId: tagId },
+      });
+      return res.status(200).json("unfollow success");
+    } else {
+      const result = await db.UserFollowTag.create({
+        userId: userId,
+        tagId: tagId,
+      });
+      return res.status(200).json("follow success");
     }
   } catch (error) {
     console.log(error);
-    return res.status(400).json("something wrong")
+    return res.status(400).json(error);
   }
-}
+};
 
-module.exports = { getTagsCard, createTagQuestion, getTagdetail, createUserFollowTag,getUserFollowTag };
+const getUserFollowTag = async (req, res) => {
+  console.log(req.body);
+  try {
+    const { userId, tagId } = req.body;
+    const check = await db.UserFollowTag.findOne({
+      where: { userId: userId, tagId: tagId },
+    });
+    if (check) {
+      return res.status(200).json(true);
+    } else {
+      return res.status(200).json(false);
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json("something wrong");
+  }
+};
+
+const getAllUserFollowTag = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const userTag = await db.UserFollowTag.findAll({
+      where: { userId },
+      attributes: ["userId", "tagId"],
+      include: [
+        { model: db.Tags,as:'tag', include:{model:db.Questions, where:{userId}, attributes:['id']} }
+      ],
+    });
+
+    
+    const userQuestion = await db.Questions.count({
+      where: { userId },
+    });
+    const userTagQuestion = userTag?.map(item=>item?.Tag?.Questions?.length/userQuestion*100)
+
+
+    const a = await db.Questions.findAll({where:{userId}, include:{model: db.Tags}})
+
+
+     console.log(userTagQuestion);
+    return res.status(200).json( userTag );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  getTagsCard,
+  createTagQuestion,
+  getTagdetail,
+  createUserFollowTag,
+  getUserFollowTag,
+  getAllUserFollowTag,
+};

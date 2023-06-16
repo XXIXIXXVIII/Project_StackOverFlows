@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import TagCard from "../component/Tags/tagCard";
 import publicClient from "../configAPIClient/publicClient";
+import queryString from "query-string";
+import useDebounce from "../hook/useDebounce";
 
 export default function Tags() {
   const [tags, setTags] = useState();
+  const [searchTag, setSearchTag] = useState();
   const [dataTagsCard, setDataTagsCard] = useState([]);
+  const q = useDebounce(searchTag,500)
 
   const handlePopular = () => {
     setTags("Popular");
@@ -20,14 +24,15 @@ export default function Tags() {
   useEffect(()=>{
     const fetchTagCard = async ()=>{
       try {
-        const res = await publicClient.get('/tags')
+        const res = await publicClient.get(`/tags${url}`)
         setDataTagsCard(res.data)
       } catch (error) {
         return error
       }
     }
+    const url = `?${queryString.stringify({ q })}`
     fetchTagCard()
-  },[])
+  },[q])
 
   return (
     <div className="text-[13px] mt-2">
@@ -63,6 +68,7 @@ export default function Tags() {
                   </svg>
                 </div>
                 <input
+                onChange={(e)=>setSearchTag(e.target.value)}
                   type="text"
                   id="search"
                   className="bg-gray-50 border border-gray-300  text-gray-900 text-sm rounded block w-full pl-10 p-2 outline-blue-500 dark:bg-[hsl(0,0%,17.5%)] dark:border-gray-600 dark:placeholder-gray-600 dark:text-[hsl(210,8%,82.5%)]"

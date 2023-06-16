@@ -1,16 +1,12 @@
 import { Link } from "react-router-dom";
 import Questions from "../component/QuestionsHome";
-import { useState, useEffect } from "react";
-import { useSelector } from 'react-redux'
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function HomeLogin() {
   const [arrange, setArrange] = useState("Interesting");
-  let [themeMode, setThemeMode] = useState();
-
-  let theme = useSelector(state=>state.theme.themeMode)
-  useEffect(()=>{
-    setThemeMode(theme)
-  }, [theme])
+  const dataQuestion = useSelector(state=>state.questionSlice?.question?.dataAllQuestions)
+  const currenUserId = useSelector((state) => state.auth.login?.currentUser?.id)
 
   const handleClickInteresting = () => {
     setArrange("Interesting");
@@ -27,14 +23,6 @@ export default function HomeLogin() {
   const handleClickMonth = () => {
     setArrange("Month");
   };
-
-  useEffect(()=>{
-    if(themeMode==='dark'){
-      document.documentElement.classList.add('dark')
-    }else{
-      document.documentElement.classList.remove('dark')
-    }
-  },[themeMode])
 
   return (
     <div className="flex text-[13px] gap-5">
@@ -106,15 +94,10 @@ export default function HomeLogin() {
           </div>
         </div>
 
-        <div className="border-b border-[hsl(210,8%,85%)] dark:border-[hsl(210,4.5%,30.5%)]">
-          <Questions />
-        </div>
-        <div className="border-b border-[hsl(210,8  %,85%)] dark:border-[hsl(210,4.5%,30.5%)]">
-          <Questions />
-        </div>
-        <div className="border-b border-[hsl(210,8%,85%)] dark:border-[hsl(210,4.5%,30.5%)]">
-          <Questions />
-        </div>
+        {dataQuestion?.map(question=><div key={question.id} className="border-b border-[hsl(210,8%,85%)] dark:border-[hsl(210,4.5%,30.5%)]">
+          <Questions question={question} currenUserId={currenUserId} />
+        </div>)}
+
       </main>
     </div>
   );

@@ -13,15 +13,15 @@ module.exports = {
         type: Sequelize.STRING
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(2000),
       },
       aboutme: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(2000),
       },
       websiteLink: {
         type: Sequelize.STRING
       },
-      fbLink: {
+      twitterLink: {
         type: Sequelize.STRING
       },
       githubLink: {
@@ -30,9 +30,6 @@ module.exports = {
       point: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
-      },
-      andress: {
-        type: Sequelize.STRING
       },
       userId: {
         type: Sequelize.STRING

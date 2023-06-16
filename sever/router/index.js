@@ -7,6 +7,7 @@ const questionsRoute = require('./questions');
 const commentRoute = require('./comment');
 const answerstRoute = require('./answers');
 const followRoute = require('./follow');
+const badgesRoute = require('./badges');
 
 const route = express.Router();
 
@@ -17,6 +18,7 @@ route.use("/questions",questionsRoute)
 route.use("/comment",commentRoute)
 route.use("/answers",answerstRoute)
 route.use("/follow",followRoute)
+route.use("/badges",badgesRoute)
 
 
 module.exports = route;

@@ -24,20 +24,16 @@ module.exports = {
       avatar: {
         allowNull: true,
         type: Sequelize.STRING,
-        defaultValue: "https://dep.anh9.com/imgs/girl-xinh-ngay-tho.jpg"
+        defaultValue: "https://khoinguonsangtao.vn/wp-content/uploads/2022/08/hinh-nen-gai-xinh.jpg"
       },
       displayName: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      metalQuestion: {
-        allowNull: true,
-        type: Sequelize.STRING
+      lastLogin: {
+        type: Sequelize.DATE
       },
-      metalAnswer: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
+      
       createdAt: {
         allowNull: true,
         type: Sequelize.DATE

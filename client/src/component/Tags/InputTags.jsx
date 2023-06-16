@@ -4,7 +4,6 @@ import deleteIcon from '../../assets/deleteIcon.png'
 
 export default function InputTags({ inputTag, handleFocusTag, tags, setTags, onTagsChange }) {
   const [valueInputTag, setValueInputTag] = useState("");
-  console.log(tags);
 
   const handleKeyDown = (e) => {
     if (e.key === " " && valueInputTag.trim() !== "") {

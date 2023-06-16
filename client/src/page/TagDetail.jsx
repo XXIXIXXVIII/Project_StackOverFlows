@@ -53,9 +53,14 @@ export default function TagDetail() {
     }
   };
 
-console.log(showEye);
+
   const fetchCreateUserFollowTag = async()=>{
-    const result = await privateClient.post("/tags/userfollow", {userId, tagId})
+    try {
+      const result = await privateClient.post("/tags/userfollow", {userId, tagId})
+    } catch (error) {
+      console.log(error);
+    }
+    
   }
 
   const fetchGetUserFollowTag = async()=>{
@@ -80,7 +85,7 @@ console.log(showEye);
       fetchCreateUserFollowTag()
     }
   };
-
+console.log(data);
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -127,7 +132,7 @@ console.log(showEye);
       <div>
         {data?.map((question) => (
           <div key={question.id}>
-          <QuestionCard id={question.id} like={question.like} title={question.title} totalAnswers={question.totalAnswers} content={question.content} view={question.view} tick={question.tick} createdAt={question.createdAt} avatar={question.User?.avatar} username={question.User?.username} userId={question.UserId} tags={question.Tags} fetch={fetch}/>
+          <QuestionCard id={question.id} like={question.like} title={question.title} totalAnswers={question.totalAnswers} content={question.content} view={question.view} tick={question.tick} createdAt={question.createdAt} avatar={question.User?.avatar} username={question.User?.username} userId={question.User.id} tags={question.Tags} fetch={fetch}/>
           </div>
         ))}
       </div>

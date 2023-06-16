@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import privateClient from "../configAPIClient/privateClient";
 import publicClient from "../configAPIClient/publicClient";
+import Paginate from "../component/Paginate";
+import moment from "moment";
 
 const modules = {
   toolbar: [
@@ -25,26 +27,28 @@ const modules = {
 };
 
 export default function QuestionDetail() {
+  const { questionId } = useParams();
   const [thanks, setThanks] = useState(false);
   const [valueAsk, setValueAsk] = useState();
   const [dataAsk, setDataAsk] = useState();
-  const { questionId } = useParams();
+  const [countAnswer, setCountAnswer] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
   const [dataQuestionDetail, setDataQuestionDetail] = useState();
 
   const user = useSelector((state) => state.auth.login.currentUser?.id);
 
   const handleAddAnswer = () => {
     try {
-      const fetch = async()=>{
+      const fetch = async () => {
         await privateClient.post("/answers", {
           user,
           valueAsk,
           questionId,
-        })
-        fetchDataAnswers()
-        setValueAsk("")
-      }
-      fetch()
+        });
+        fetchDataAnswers();
+        setValueAsk("");
+      };
+      fetch();
     } catch (error) {
       console.log(error);
     }
@@ -59,32 +63,44 @@ export default function QuestionDetail() {
     }
   };
 
-  useEffect(() => {
-    fetDataQuestion();
-
-  }, [questionId]);
-
-  const fetchDataAnswers = async()=>{
+  const fetchCountAnswers = async () => {
     try {
-      const result = await publicClient.get(`/answers/${questionId}`)
+      const result = await publicClient.get(
+        `/answers/countForQuestion/${questionId}`
+      );
+      setCountAnswer(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDataAnswers = async () => {
+    try {
+      const result = await publicClient.get(`/answers/${questionId}`);
       setDataAsk(result.data);
     } catch (error) {
-      return error
+      return error;
     }
-  }
+  };
 
-  useEffect(()=>{
-    fetchDataAnswers()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[questionId])
+  useEffect(() => {
+    fetchDataAnswers();
+    fetDataQuestion();
+    fetchCountAnswers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionId]);
 
-
+  const createdQuestion = moment(dataQuestionDetail?.createdAt).fromNow();
+  const updateQuestion = moment(dataQuestionDetail?.updateAt).fromNow();
+  
   return (
     <div>
       <div className="flex justify-between items-center gap-3">
-        <Link className="text-[1.7rem] text-[hsl(210,8%,25%)] break-words" dangerouslySetInnerHTML={{ __html: dataQuestionDetail?.title }}>
+        <Link
+          className="text-[1.7rem] text-[hsl(210,8%,25%)] break-words"
+          dangerouslySetInnerHTML={{ __html: dataQuestionDetail?.title }}
           
-        </Link>
+        ></Link>
         <Link
           to={"/questions/ask"}
           className="bg-[hsl(206,100%,52%)] text-sm block w-28 text-center rounded border shadow-sm p-2 text-white hover:bg-[hsl(206,100%,40%)] dark:border-none"
@@ -93,15 +109,14 @@ export default function QuestionDetail() {
         </Link>
       </div>
       <div className="border-b border-[hsl(210,8%,90%)] text-xs flex gap-5 py-4">
-        <div>
-          <span className="text-[hsl(210,8%,45%)]">Asked</span> 10 years, 11
-          months ago
+        <div className="flex gap-2">
+          <span className="text-[hsl(210,8%,45%)]">Asked</span> {createdQuestion}
         </div>
-        <div>
-          <span className="text-[hsl(210,8%,45%)]">Modified</span> 5 days ago
+        <div className="flex gap-2">
+          <span className="text-[hsl(210,8%,45%)]">Modified</span> {updateQuestion}
         </div>
-        <div>
-          <span className="text-[hsl(210,8%,45%)]">Viewed</span> 1.8m times
+        <div className="flex gap-2">
+          <span className="text-[hsl(210,8%,45%)]">Viewed</span> {dataQuestionDetail?.view} times
         </div>
       </div>
 
@@ -110,8 +125,16 @@ export default function QuestionDetail() {
           <div>
             <QuestionComment dataQuestionDetail={dataQuestionDetail} />
           </div>
+          <div className="mt-10">
+            <div className="text-2xl">{countAnswer} Answers</div>
+            <div className="mt-5"><Paginate countAllQuestion={countAnswer} setCurrentPage={setCurrentPage} currentPage={currentPage} perPage={20}/></div>
+          </div>
           <div className="my-10">
-            <AnswersComent dataAsk={dataAsk} useId={user} fetchDataAnswers={fetchDataAnswers}/>
+            <AnswersComent
+              dataAsk={dataAsk}
+              useId={user}
+              fetchDataAnswers={fetchDataAnswers}
+            />
           </div>
           <div>
             <div className="py-6 border-t border-gray-200 text-xl">
@@ -124,7 +147,6 @@ export default function QuestionDetail() {
               onChange={setValueAsk}
               modules={modules}
               onFocus={() => setThanks(true)}
-    
             />
           </div>
           {thanks && (
@@ -169,7 +191,8 @@ export default function QuestionDetail() {
             <div>Browse other questions tagged</div>
             <div className="flex gap-1 text-sm">
               {dataQuestionDetail?.Tags?.map((tag) => (
-                <Link key={tag.id}
+                <Link
+                  key={tag.id}
                   to={`/questions/tagged/${tag.nameTag}`}
                   className="bg-[hsl(205,46%,92%)] text-[hsl(205,47%,42%)] rounded px-[6px] py-1 text-xs hover:text-[hsl(205,46%,32%)] hover:bg-[hsl(205,53%,88%)] dark:bg-[hsl(205,14%,28%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:bg-[hsl(205,17.5%,32%)] dark:hover:text-[hsl(205,49.5%,87%)]"
                 >

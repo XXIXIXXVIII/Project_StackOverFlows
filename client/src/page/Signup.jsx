@@ -109,45 +109,49 @@ export default function Signup() {
               )}
               <div className="w-full py-1 mx-auto">
                 <label
-                  className="block text-grey-darker text-sm font-medium mb-2 cursor-pointer"
+                  className="block text-sm font-medium mb-2 cursor-pointer"
                   htmlFor="DisplayName"
                 >
                   Display name
                 </label>
                 <input
-                  className="shadow w-full appearance-none border border-[hsl(210,8%,75%)] rounded  py-1 px-3 text-grey-darker"
-                  id="DisplayName"
-                  type="text"
-                  onChange={(e) => setDisplayName(e.target.value)}
-                />
+              onChange={(e) => setDisplayName(e.target.value)}
+                id="DisplayName"
+                autoComplete="off"
+                className=" w-full text-[13px] outline-none border border-[hsl(210,8%,75%)] focus:border-blue-500 rounded p-2 focus:shadow-lg focus:shadow-blue-500/50"
+              />
               </div>
+                  
               <div className="w-full py-1 mx-auto">
                 <label
-                  className="block text-grey-darker text-sm font-medium mb-2 cursor-pointer"
+                  className="block text-sm font-medium mb-2 cursor-pointer"
                   htmlFor="UserName"
                 >
                   UserName
                 </label>
                 <input
-                  className="shadow w-full appearance-none border border-[hsl(210,8%,75%)] rounded  py-1 px-3 text-grey-darker"
-                  id="UserName"
-                  type="text"
-                  onChange={(e) => setUsername(e.target.value)}
-                />
+              onChange={(e) => setUsername(e.target.value)}
+                id="UserName"
+                autoComplete="off"
+                className=" w-full text-[13px] outline-none border border-[hsl(210,8%,75%)] focus:border-blue-500 rounded p-2 focus:shadow-lg focus:shadow-blue-500/50"
+              />
+                  
               </div>
               <div className="w-full py-1 mx-auto">
                 <label
-                  className="block text-grey-darker text-sm font-medium mb-2 cursor-pointer"
+                  className="block text-sm font-medium mb-2 cursor-pointer"
                   htmlFor="Password"
                 >
                   Password
                 </label>
                 <input
-                  className="shadow w-full appearance-none border border-[hsl(210,8%,75%)] rounded  py-1 px-3 text-grey-darker"
-                  id="Password"
-                  type="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+              onChange={(e) => setPassword(e.target.value)}
+                id="Password"
+                type="password"
+                autoComplete="off"
+                className=" w-full text-[13px] outline-none border border-[hsl(210,8%,75%)] focus:border-blue-500 rounded p-2 focus:shadow-lg focus:shadow-blue-500/50"
+              />
+                  
               </div>
 
               <div className="text-gray-500 font-light w-full text-[12px] mt-1">

@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       Answers.belongsTo(models.Questions, {foreignKey: "questionId"})
       Answers.belongsTo(models.User, {foreignKey: "userId"})
       Answers.hasMany(models.commentAnswers)
+      Answers.hasMany(models.BadgesProgessAnswer)
+      Answers.belongsToMany(models.User, {
+        through: "UserActionAnswer",
+        foreignKey: "answerId",
+        otherKey: "userId",
+      })
     }
   }
   Answers.init({

@@ -1,44 +1,47 @@
 import { useEffect, useState } from "react";
 import User from "../component/Users/User";
 import publicClient from './../configAPIClient/publicClient';
-import loadingPacman from '../assets/iconLoading/loadingPacman.svg';
+import queryString  from 'query-string';
+import useDebounce from "../hook/useDebounce";
 
 
 export default function AllUserPage() {
   const [arrange, setArrange] = useState("Reputation");
   const [oderbyTime, setOderbyTime] = useState("week");
   const [dataAllUser, setDataAllUser] = useState([]);
-  const [loadDataAllUser, setLoadDataAllUser] = useState(false);
+  const [sortBy, setSortBy] = useState();
+  const [valueSearch, setValueSearch] = useState();
   const [errLoadDataAllUser, setErrLoadDataAllUser] = useState(false);
+  const q = useDebounce(valueSearch,500)  
+
 
   useEffect(()=>{
     const fetchAllUsers =async()=>{
-      setLoadDataAllUser(true)
       try {
-        const result =await publicClient.get('/user')
-
+        const result =await publicClient.get(`/user${url}`)
         setDataAllUser(result?.data)
-        setLoadDataAllUser(false)
       } catch (error) {
-
-        setLoadDataAllUser(false)
         setErrLoadDataAllUser(error)
         return error
       }
     } 
+    const url = `?${queryString.stringify({ sortBy, q })}`
     fetchAllUsers()
-  },[])
+  },[q, sortBy])
 
-  console.log(dataAllUser);
+
 
   const handleClickReputation = () => {
     setArrange("Reputation");
+    setSortBy("")
   };
   const handleClickNewUsers = () => {
     setArrange("NewUsers");
+    setSortBy('newuser')
   };
   const handleClickVoters = () => {
     setArrange("Voters");
+    setSortBy('vote')
   };
   const handleClickEditors = () => {
     setArrange("Editors");
@@ -64,7 +67,7 @@ export default function AllUserPage() {
     setOderbyTime("all");
   };
 
-console.log(dataAllUser);
+
 
   return (
     <div className=" text-xs">
@@ -86,6 +89,7 @@ console.log(dataAllUser);
                   </svg>
                 </div>
                 <input
+                onChange={(e)=>setValueSearch(e.target.value)}
                   type="text"
                   id="search"
                   className="bg-gray-50 border border-gray-300  text-gray-900 text-sm rounded block w-full pl-10 p-2 outline-blue-500 dark:bg-[hsl(0,0%,17.5%)] dark:border-gray-600 dark:placeholder-gray-600 dark:text-[hsl(210,8%,82.5%)]"
@@ -165,7 +169,6 @@ console.log(dataAllUser);
         </ul>
       </div>
       <div className="mt-4 grid grid-cols-4 gap-3">
-      {loadDataAllUser&&<div className="w-40 mx-auto"> <img src={loadingPacman}/></div>}
       {errLoadDataAllUser&&<div className="w-40 mx-auto"> <span>{errLoadDataAllUser}</span></div>}
       {dataAllUser?.map(user=><div key={user.id}><User user={user}/></div>)}
       </div>

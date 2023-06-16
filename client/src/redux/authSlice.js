@@ -35,6 +35,12 @@ const authSlice = createSlice({
         state.login.isFetching = false;
         state.login.error = action.error.message;
       })
+      .addCase(logoutRedux.fulfilled,(state, action)=>{
+        state.login.currentUser = action.payload;
+      })
+      .addCase(refresh.fulfilled,(state,action)=>{
+        state.login.currentUser = action.payload;
+      })
   },
 });
 
@@ -45,9 +51,8 @@ export const loginRedux = createAsyncThunk(
       username,
       password,
     });
-    console.log(result);
+    console.log(result.data);
     localStorage.setItem("accessToken", result.data.accessToken);
-   
     return result.data.userData;
   }
 );
@@ -57,9 +62,24 @@ export const signupRedux = createAsyncThunk("auth/signupRedux",async ({displayna
     const result = await publicClient.post("/auth/signup", {displayname, username, password})
     console.log(result.data.dataUser );
     localStorage.setItem("accessToken", result.data.accessToken)
+    console.log(result.data);
     return result.data.dataUser
   } catch (error) {
    throw new Error(error.response.data.message)
+  }
+})
+
+export const logoutRedux = createAsyncThunk('auth/logout',()=>{
+  const result = ""
+  return result
+})
+
+export const refresh = createAsyncThunk('auth/refresh',async({id})=>{
+  try {
+    const result = await publicClient.get(`/user/${id}`)
+    return result.data
+  } catch (error) {
+    throw new Error(error.response.data.message)
   }
   
 

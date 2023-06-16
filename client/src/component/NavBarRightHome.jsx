@@ -2,8 +2,27 @@ import penIcon from "../assets/penIcon.png";
 import exchangeIcon from "../assets/exchangeIcon.png";
 import metaStackIcon from "../assets/metaStackIcon.png";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import privateClient from './../configAPIClient/privateClient';
 
 export default function NavBarRightHome() {
+  const [userFollowTag, setUserFollowTag]= useState()
+  const userId = useSelector(state=>state.auth.login.currentUser?.id)
+
+  const fetchTag = async()=>{
+    try {
+      const result = await privateClient.get(`/user/${userId}`)
+    setUserFollowTag(result.data.Tags)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(()=>{
+    fetchTag()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
+
   return (
     <div className="flex flex-col gap-5 dark:text-white text-sm">
       <div className="bg-[hsl(47,87%,94%)]">
@@ -88,23 +107,15 @@ export default function NavBarRightHome() {
         </div>
       </div>
 
-      <div className="border border-[hsl(210,8%,85%)] rounded dark:border-[hsl(210,4%,26%)]">
+      <div  className="border border-[hsl(210,8%,85%)] rounded dark:border-[hsl(210,4%,26%)]">
         <div className="bg-[hsl(210,8%,97.5%)] px-[15px] py-3 border-b text-[hsl(210,8%,35%)] text-[15px] border-[hsl(210,8%,85%)] flex justify-between dark:bg-[hsl(0,0%,22.5%)] dark:border-[hsl(210,4%,26%)] dark:text-[hsl(210,7%,78.5%)]"><div>Watched Tags</div><div className="cursor-pointer">edit</div></div>
         <div className="px-[15px] py-5">
-        <Link className="bg-[hsl(205,46%,92%)] text-[hsl(205,47%,42%)] rounded px-[6px] py-1 text-xs hover:text-[hsl(205,46%,32%)] hover:bg-[hsl(205,53%,88%)] dark:bg-[hsl(205,14%,28%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:bg-[hsl(205,17.5%,32%)] dark:hover:text-[hsl(205,49.5%,87%)]">
-              Nextjs13
-            </Link>
+        {userFollowTag?.map(tag=><Link key={tag.id} onClick={()=>fetchTag()} to={`/questions/tagged/${tag.nameTag}`} className=" ml-1 bg-[hsl(205,46%,92%)] text-[hsl(205,47%,42%)] rounded px-[6px] py-1 text-xs hover:text-[hsl(205,46%,32%)] hover:bg-[hsl(205,53%,88%)] dark:bg-[hsl(205,14%,28%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:bg-[hsl(205,17.5%,32%)] dark:hover:text-[hsl(205,49.5%,87%)]">
+              {tag.nameTag}
+            </Link>)}
         </div>
       </div>
 
-      <div className="border border-[hsl(210,8%,85%)] rounded dark:border-[hsl(210,4%,26%)]">
-        <div className="bg-[hsl(210,8%,97.5%)] px-[15px] py-3 border-b text-[hsl(210,8%,35%)] text-[15px] border-[hsl(210,8%,85%)] flex justify-between dark:bg-[hsl(0,0%,22.5%)] dark:border-[hsl(210,4%,26%)] dark:text-[hsl(210,7%,78.5%)]"><div>Ignored Tags</div></div>
-        <div className="px-[15px] py-5">
-        <Link className="bg-[hsl(205,46%,92%)] text-[hsl(205,47%,42%)] rounded px-[6px] py-1 text-xs hover:text-[hsl(205,46%,32%)] hover:bg-[hsl(205,53%,88%)] dark:bg-[hsl(205,14%,28%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:bg-[hsl(205,17.5%,32%)] dark:hover:text-[hsl(205,49.5%,87%)]">
-              Nextjs13
-            </Link>
-        </div>
-      </div>
     </div>
   );
 }

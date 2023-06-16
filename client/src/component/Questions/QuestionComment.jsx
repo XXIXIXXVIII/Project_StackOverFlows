@@ -10,6 +10,7 @@ import moment from "moment";
 import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import privateClient from "../../configAPIClient/privateClient";
+import parse from "html-react-parser"
 import Alert from "../ModalAlert/Alert";
 
 export default function QuestionComment({ dataQuestionDetail }) {
@@ -20,6 +21,11 @@ export default function QuestionComment({ dataQuestionDetail }) {
   const [showCmtQuestion, setShowCmtQuestion] = useState(false);
   const [alertFollow, setAlertFollow] = useState("");
   const [countLike, setCountLike] = useState();
+  const [statusUpLike, setStatusUpLike] = useState();
+  const [statusDownLike, setStatusDownLike] = useState();
+
+
+
   const userId = useSelector((state) => state.auth.login.currentUser?.id);
 
   const timeAgo = moment(dataQuestionDetail?.createdAt).fromNow();
@@ -38,7 +44,7 @@ export default function QuestionComment({ dataQuestionDetail }) {
     };
     fetch();
   };
-  console.log(dataQuestionDetail?.like);
+
   useEffect(() => {
     
     if(userId){
@@ -58,11 +64,28 @@ export default function QuestionComment({ dataQuestionDetail }) {
 
   useEffect(()=>{
     setCountLike(dataQuestionDetail?.like)
+
   },[dataQuestionDetail?.like])
+
+  useEffect(()=>{
+    const fetStatusUpLike = async()=>{
+      const result = await publicClient.post(`/questions/upgetlike`,{questionId, userId})
+      setStatusUpLike(result.data)
+    }
+    fetStatusUpLike()
+
+    const fetStatusDownLike = async()=>{
+      const result = await publicClient.post(`/questions/downgetlike/`,{questionId, userId})
+      setStatusDownLike(result.data)
+    }
+    fetStatusDownLike()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
 
   const showHideAlert =()=>{
     setAlertFollow("")
   }
+
 
   const handleFollowQuestion = async () => {
     if (followQuestion === "have") {
@@ -75,12 +98,38 @@ export default function QuestionComment({ dataQuestionDetail }) {
 
   };
   const handleDownLikeQuestion =async ()=>{
-    setCountLike(countLike-1)
-    await privateClient.post('/questions/downlike', {questionId})
+    if(statusUpLike==="liked"&&statusDownLike==="haven't downliked"){
+      setCountLike(countLike-2)
+      setStatusUpLike("haven't liked")
+      setStatusDownLike("downliked")
+      await privateClient.post('/questions/downlike', {questionId, userId})
+      return
+    }
+    if(statusDownLike==="downliked"){
+      setCountLike(countLike+1)
+      setStatusDownLike("haven't downliked")
+    }else{
+      setCountLike(countLike-1)
+      setStatusDownLike("downliked")
+    }
+    await privateClient.post('/questions/downlike', {questionId, userId})
   }
   const handleUpLikeQuestion = async()=>{
-    setCountLike(countLike+1)
-    await privateClient.post('/questions/uplike', {questionId})
+    if(statusDownLike==="downliked"&&statusUpLike==="haven't liked"){
+      setCountLike(countLike+2)
+      setStatusDownLike("haven't downliked")
+      setStatusUpLike("liked")
+      await privateClient.post('/questions/uplike', {questionId, userId})
+      return
+    }
+    if(statusUpLike==="liked"){
+      setCountLike(countLike-1)
+      setStatusUpLike("haven't liked")
+    }else{
+      setCountLike(countLike+1)
+      setStatusUpLike("liked")
+    }
+    await privateClient.post('/questions/uplike', {questionId, userId})
   }
 
 
@@ -88,11 +137,11 @@ export default function QuestionComment({ dataQuestionDetail }) {
     <div className="flex">
     {alertFollow&&<Alert title={`${alertFollow}`} showHideAlert={showHideAlert}/>}
       <div className="basis-[7%] flex flex-col items-center gap-4">
-        <div onClick={handleUpLikeQuestion} className="p-[10.4px] w-10 rounded-full border border-[hsl(210,8%,15%] hover:bg-red-100 cursor-pointer">
+        <div onClick={handleUpLikeQuestion} style={{background:statusUpLike==="liked"?"#FFCCCC":""}} className="p-[10.4px] w-10 rounded-full border border-[hsl(210,8%,15%] hover:bg-red-100 cursor-pointer">
           <img className="object-cover w-full h-full" src={upIcon} />
         </div>
         <div className="text-xl font-semibold">{countLike}</div>
-        <div onClick={handleDownLikeQuestion} className="p-[10.4px] w-10 rounded-full border border-[hsl(210,8%,15%] hover:bg-red-100 cursor-pointer">
+        <div onClick={handleDownLikeQuestion}  style={{background:statusDownLike==="downliked"?"#FFCCCC":""}}  className="p-[10.4px] w-10 rounded-full border border-[hsl(210,8%,15%] hover:bg-red-100 cursor-pointer">
           <img src={downIcon} />
         </div>
         <div onClick={handleFollowQuestion} className="cursor-pointer">
@@ -106,11 +155,13 @@ export default function QuestionComment({ dataQuestionDetail }) {
           <img src={createAtIcon} />
         </div>
       </div>
-      <div className="ml-4">
+      <div className="ml-4 flex-1">
         <div
           className="text-base font-[350]"
-          dangerouslySetInnerHTML={{ __html: dataQuestionDetail?.content }}
-        ></div>
+          // dangerouslySetInnerHTML={{ __html:  }}
+        >
+          {dataQuestionDetail?.content&&parse(dataQuestionDetail?.content)}
+        </div>
         <div className="my-6 flex gap-2">
           {dataQuestionDetail?.Tags.map((tag) => (
             <Link
@@ -122,7 +173,7 @@ export default function QuestionComment({ dataQuestionDetail }) {
             </Link>
           ))}
         </div>
-        <div className="grid grid-cols-3 text-xs gap-1">
+        <div className="grid grid-cols-3 text-xs gap-1 mb-2 pb-6 border-b border-gray-300">
           <div className="text-xs text-[hsl(210,8%,45%)] flex gap-3">
             <div>
               <span className="cursor-pointer hover:text-blue-400">Share</span>
@@ -134,12 +185,14 @@ export default function QuestionComment({ dataQuestionDetail }) {
               <span className="cursor-pointer hover:text-blue-400">Follow</span>
             </div>
           </div>
-          <div>{timeAgo}</div>
-          <div className="p-[5px] w-44   text-[hsl(210,8%,45%)] bg-blue-200 rounded-sm">
-            <div>asked Jun 27, 2012 at 13:51</div>
-            <div className="flex gap-1 mt-1">
+          <div></div>
+          <div className="p-2 w-44   text-[hsl(210,8%,45%)] bg-blue-200 rounded-sm">
+            <div>asked {timeAgo}</div>
+            <div className="flex gap-1 mt-2">
               <div className="w-10 h-10 flex items-center justify-center">
-                <img src={`${dataQuestionDetail?.User?.avatar}`} />
+                <img src={dataQuestionDetail?.User?.avatar!=='https://khoinguonsangtao.vn/wp-content/uploads/2022/08/hinh-nen-gai-xinh.jpg'?`http://localhost:8080/${dataQuestionDetail?.User?.avatar}`:'https://khoinguonsangtao.vn/wp-content/uploads/2022/08/hinh-nen-gai-xinh.jpg'} />
+                
+                
               </div>
               <div className="flex flex-col gap-1 text-sm">
                 <div className="text-blue-500 ">
@@ -184,7 +237,7 @@ export default function QuestionComment({ dataQuestionDetail }) {
             return (
               <div
                 key={cmt.id}
-                className="text-xs p-4 border-t border-[hsl(210,8%,95%)]"
+                className="text-xs p-4 border-b border-[hsl(210,8%,95%)]"
               >
                 {cmt.content} --{" "}
                 <Link
@@ -200,7 +253,7 @@ export default function QuestionComment({ dataQuestionDetail }) {
         </div>
         <div
           onClick={() => setShowCmtQuestion(true)}
-          className="text-[hsl(210,8%,55%)] cursor-pointer hover:text-blue-300 text-sm"
+          className="text-[hsl(210,8%,55%)] cursor-pointer hover:text-blue-300 text-sm mt-4"
         >
           Add a comment
         </div>

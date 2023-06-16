@@ -21,8 +21,6 @@ export default function Login() {
     dispatch(loginRedux({ username, password }));
 
   };
-console.log(error);
-console.log("object",isFetching);
 useEffect(()=>{
   if(currentUser){
     navigate("/")
@@ -42,18 +40,17 @@ useEffect(()=>{
         <div className="w-full bg-white rounded-md shadow-lg shadow-slate-500 mt-4">
           <div className="w-[80%] py-4 mx-auto relative">
             <label
-              className="block text-grey-darker text-sm font-medium mb-2"
+              className="block text-sm font-medium mb-2"
               htmlFor="UserName"
             >
               UserName
             </label>
             <input
-            style={{border:error&& "1px solid hsl(358,62%,52%) "}}
-              onChange={(e) => setUsername(e.target.value)}
-              className="shadow w-full appearance-none border border-[hsl(210,8%,75%)] rounded  py-1 px-3 text-grey-darker"
-              id="UserName"
-              type="text"
-            />
+              onChange={(e)=>setUsername(e.target.value)}
+                id="UserName"
+                autoComplete="off"
+                className=" w-full text-[13px] outline-none border border-[hsl(210,8%,75%)] focus:border-blue-500 rounded p-2 focus:shadow-lg focus:shadow-blue-500/50"
+              />
             {error&&<span className="text-[hsl(358,62%,52%)] text-xs">The email is not a valid email address.</span>}
             {error&&<div className="absolute right-2 top-[52px]"><img src={iconWrong}/></div>}
           </div>
@@ -61,7 +58,7 @@ useEffect(()=>{
           <div className="mb-4 w-[80%] mx-auto">
             <div className="flex justify-between mb-2 items-center">
               <label
-                className="block text-grey-darker text-sm font-medium "
+                className="block text-sm font-medium "
                 htmlFor="Password"
               >
                 Password
@@ -73,11 +70,12 @@ useEffect(()=>{
               </div>
             </div>
             <input
-              onChange={(e) => setPassword(e.target.value)}
-              className="shadow w-full appearance-none border border-[hsl(210,8%,75%)] rounded  py-1 px-3 text-grey-darker"
-              id="Password"
-              type="text"
-            />
+              onChange={(e)=>setPassword(e.target.value)}
+                id="Password"
+                type="password"
+                autoComplete="off"
+                className=" w-full text-[13px] outline-none border border-[hsl(210,8%,75%)] focus:border-blue-500 rounded p-2 focus:shadow-lg focus:shadow-blue-500/50"
+              />
             <button
               onClick={handleLogin}
               className="w-full bg-blue-400 hover:bg-blue-600 rounded text-white my-5 items-center"

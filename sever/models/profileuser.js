@@ -16,14 +16,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   ProfileUser.init({
     location: DataTypes.STRING,
-    title: DataTypes.STRING,
-    aboutme: DataTypes.STRING,
+    title: DataTypes.TEXT("long"),
+    aboutme: DataTypes.TEXT("long"),
     websiteLink: DataTypes.STRING,
-    fbLink: DataTypes.STRING,
+    twitterLink: DataTypes.STRING,
     githubLink: DataTypes.STRING,
     point: DataTypes.INTEGER,
-    andress: DataTypes.STRING,
-    userId: DataTypes.STRING
+    userId: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'ProfileUser',

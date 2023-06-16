@@ -15,9 +15,13 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Answers)
       User.hasMany(models.commentAnswers)
       User.hasMany(models.commentQuestion)
+      User.hasMany(models.Save)
       User.hasOne(models.ProfileUser, {foreignKey: 'userId' }),
       User.belongsToMany(models.Tags, {through: "UserFollowTags", foreignKey: 'userId', otherKey: 'tagId'})
-      User.belongsToMany(models.Questions, {through: "`userfollowquestions`", foreignKey: 'userId', otherKey: 'questionId'})
+      User.belongsToMany(models.Questions, {through: "UserActionQuestions", foreignKey: 'userId', otherKey: 'questionId'})
+      User.belongsToMany(models.Answers, {through: "UserActionAnswer", foreignKey: 'userId', otherKey: 'answerId'})
+      User.belongsToMany(models.BadgesQuestion, {through: "BadgesProgessQuestion", foreignKey: 'userId', otherKey: 'badgesQuestionId'})
+      User.belongsToMany(models.BadgesAnswer, {through: "BadgesProgessAnswer", foreignKey: 'userId', otherKey: 'badgesAnswerId'})
     }
   }
   User.init({
@@ -26,8 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     registerMethod: DataTypes.STRING,
     avatar: DataTypes.STRING,
     displayName: DataTypes.STRING,
-    metalQuestion: DataTypes.STRING,
-    metalAnswer: DataTypes.STRING,
+    lastLogin: DataTypes.DATE,
+
   }, {
     sequelize,
     modelName: 'User',

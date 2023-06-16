@@ -8,6 +8,7 @@ import InputTags from "../component/Tags/InputTags";
 import privateClient from "./../configAPIClient/privateClient";
 import { useSelector } from "react-redux";
 import Success from "../component/ModalAlert/Success";
+import Alert from "../component/ModalAlert/Alert";
 
 const modules = {
   toolbar: [
@@ -109,19 +110,14 @@ export default function QuestionAsk() {
     fetchData();
   };
 
-  const handleAlert = () => {
+  const showHideAlert = () => {
     setAlert("");
   };
 
   return (
     <div className="bg-gray-50 w-full h-full relative">
       {alert === "success" && (
-        <Success
-          content={"Ask questions successfully "}
-          handleAlert={handleAlert}
-          link={"/questions"}
-          linkTo={"Questions"}
-        />
+        <Alert title={'Question sent successfully'} showHideAlert={showHideAlert}/>
       )}
       <div className="w-[82%] mx-auto text-sm">
         <div className="font-medium text-3xl h-36 flex items-center relative mb-3">

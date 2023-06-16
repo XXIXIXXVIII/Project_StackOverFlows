@@ -3,8 +3,8 @@ import propTypes from "prop-types";
 import UserCard from "./UserCard";
 
 export default function User({ user }) {
-  const { username, avatar, Tags, ProfileUser, id } = user;
-  console.log(Tags);
+  const { username, avatar, Tags, id } = user;
+
   return (
     <div className="flex gap-2 p-2 relative">
       <UserCard user={user} />
@@ -16,16 +16,16 @@ export default function User({ user }) {
         >
           {username}
         </Link>
-        <div className="text-[hsl(210,8%,45%)]">{ProfileUser?.andress}</div>
+        <div className="text-[hsl(210,8%,45%)]">{user?.ProfileUsers[0]?.location}</div>
         <div className="font-bold text-[hsl(210,8%,45%)]">
-          {ProfileUser?.point}
+          {user?.ProfileUsers[0]?.point}
         </div>
         <div className="flex gap-2">
           {Tags.map((tag) => (
             <Link
               to={`/questions/tagged/${tag.nameTag}`}
               key={tag.id}
-              className="bg-[hsl(205,46%,92%)] text-[hsl(205,47%,42%)] rounded px-[6px] py-1 text-xs hover:text-[hsl(205,46%,32%)] hover:bg-[hsl(205,53%,88%)] dark:bg-[hsl(205,14%,28%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:bg-[hsl(205,17.5%,32%)] dark:hover:text-[hsl(205,49.5%,87%)]"
+              className=" text-blue-500 rounded text-[12px] hover:text-[hsl(205,46%,32%)] dark:text-[hsl(205,46.5%,73.5%)] dark:hover:text-[hsl(205,49.5%,87%)]"
             >
               {tag.nameTag}
             </Link>

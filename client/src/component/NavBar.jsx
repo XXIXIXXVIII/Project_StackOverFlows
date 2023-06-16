@@ -2,28 +2,14 @@ import { Link } from "react-router-dom";
 import { IoEarth } from "react-icons/io5";
 import { AiFillInfoCircle } from "react-icons/ai";
 import { GiStarFormation, GiHandBag } from "react-icons/gi";
-import { useState, useEffect } from "react";
-import { MdDarkMode } from "react-icons/md";
-import { BsFillSunFill } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { useSelector } from "react-redux";
-import { themeModeRedux } from "../redux/themeSilce";
+
 
 export default function NavBar() {
   const currentPath = window.location.pathname;
   const [nav, setNav] = useState(`${currentPath}`);
-
-  const dispatch = useDispatch();
-
   let theme = useSelector((state) => state.theme.themeMode);
-
-  useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [theme]);
 
   const handleHome = () => {
     setNav("/");
@@ -42,14 +28,6 @@ export default function NavBar() {
   };
   const handleExplore = () => {
     setNav("/explore");
-  };
-
-  const handleTheme = () => {
-    if (theme === "dark") {
-      dispatch(themeModeRedux("white"));
-    } else {
-      dispatch(themeModeRedux("dark"));
-    }
   };
 
   return (
@@ -181,13 +159,6 @@ export default function NavBar() {
           Looking for your Teams?
         </div>
 
-        <div onClick={handleTheme} className="cursor-pointer mt-2">
-          {theme === "white" ? (
-            <div className="text-black flex gap-2 items-center"><MdDarkMode size={30} />Dark Mode</div>
-          ) : (
-            <div className="text-yellow-500 flex gap-2 items-center"><BsFillSunFill size={30} />Light Mode</div>
-          )}
-        </div>
       </div>
     </>
   );
